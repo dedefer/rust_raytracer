@@ -3,7 +3,7 @@ use crate::ray::Ray;
 use crate::hittable::HitRecord;
 use rand::random;
 
-pub trait Material {
+pub trait Material: Sync + Send {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Ray, Color)>;
 }
 

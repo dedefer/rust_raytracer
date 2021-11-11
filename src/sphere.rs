@@ -1,19 +1,20 @@
+use std::sync::Arc;
+
 use crate::hittable::{HitRecord, Hittable};
 use crate::vec3::Point3;
 use crate::ray::Ray;
 use crate::material::Material;
-use std::rc::Rc;
 
 #[derive(Clone)]
 pub struct Sphere {
     center: Point3,
     radius: f64,
 
-    material: Rc<dyn Material>,
+    material: Arc<dyn Material>,
 }
 
 impl Sphere {
-    pub fn new(center: Point3, radius: f64, mat: Rc<dyn Material>) -> Sphere {
+    pub fn new(center: Point3, radius: f64, mat: Arc<dyn Material>) -> Sphere {
         Sphere{
             center: center,
             radius: radius,
