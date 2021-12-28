@@ -24,8 +24,8 @@ fn main() {
     let aspect_ratio = 16.0 / 9.0;
     let image_width: u32 = 480;
     let image_height: u32 = ((image_width as f64) / aspect_ratio) as u32;
-    let samples_per_pixel = 1000;
-    let max_depth = 50;
+    let samples_per_pixel = 10;
+    let max_depth = 10;
 
 
     // camera
@@ -88,38 +88,36 @@ fn random_scene() -> HittableList {
         Arc::new(Metal(albedo, fuzz))
     };
 
-    let glass = || Arc::new(Dielectric(1.5));
+    let glass = || Arc::new(Dielectric(1.5, Vec3::random(0.7, 1.0)));
 
     for a in -16..16 {
         for b in -16..16 {
-            let choose_mat: f64 = random();
             let rnd = |x| x as f64 + 0.9*random::<f64>();
             let center = Vec3(rnd(a), 0.2, rnd(b));
 
-            if (center - Vec3(4.0, 0.2, 0.0)).length() > 0.9 {
-                let material: Arc<dyn Material> =
-                    if choose_mat < 0.8 {
-                        diffuse()
-                    } else if choose_mat < 0.95 {
-                        metal()
-                    } else {
-                        glass()
-                    };
-
-                world.add(Box::new(Sphere::new(
-                    center, 0.2, material,
-                )));
+            if (center - Vec3(4.0, 0.2, 0.0)).length() <= 0.9 {
+                continue;
             }
+
+            let material: Arc<dyn Material> = match random::<f64>() {
+                r if r < 0.80 => glass(),
+                r if r < 0.95 => diffuse(),
+                _ => metal(),
+            };
+
+            world.add(Box::new(Sphere::new(
+                center, 0.2, material,
+            )));
         }
     }
 
-    let material1 = Arc::new(Dielectric(1.5));
+    let material1 = Arc::new(Dielectric(1.5, Vec3(1., 1., 1.)));
     world.add(Box::new(Sphere::new(
         Vec3(0.0, 1.0, 0.0), 1.0, material1.clone(),
     )));
-    world.add(Box::new(Sphere::new(
-        Vec3(0.0, 1.0, 0.0), -0.3, material1.clone(),
-    )));
+    // world.add(Box::new(Sphere::new(
+    //     Vec3(0.0, 1.0, 0.0), -0.3, material1.clone(),
+    // )));
 
     let material2 = Arc::new(Lambertian(Vec3(0.8, 0.4, 1.0)));
     world.add(Box::new(Sphere::new(

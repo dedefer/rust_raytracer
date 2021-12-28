@@ -38,7 +38,7 @@ impl Material for Metal {
 }
 
 #[derive(Clone, Copy)]
-pub struct Dielectric(pub f64);
+pub struct Dielectric(pub f64, pub Color);
 
 impl Dielectric {
     fn reflectance(cosine: f64, ref_idx: f64) -> f64 {
@@ -68,7 +68,7 @@ impl Material for Dielectric {
 
         Some((
             Ray::new(rec.point, direction),
-            Vec3(1.0, 1.0, 1.0),
+            self.1,
         ))
     }
 }
